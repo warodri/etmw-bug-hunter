@@ -86,7 +86,26 @@ export class ScreenProjects implements OnInit {
     }
   }
 
+  agentFor(project: Project) {
+    return project.agentId
+      ? this.agentList().find((agent) => agent.id === project.agentId) ?? null
+      : null;
+  }
+
+  agentOnline(project: Project): boolean {
+    return this.agentFor(project)?.online === true;
+  }
+
   async scanNow(project: Project): Promise<void> {
+    if (project.mode === 'agent' && !this.agentOnline(project)) {
+      this.messages.add({
+        severity: 'error',
+        summary: 'The desktop agent is offline',
+        detail: 'Start the Bug Hunter agent on that computer, then try the scan again.'
+      });
+      return;
+    }
+
     this.startingId.set(project.id);
 
     try {

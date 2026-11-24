@@ -150,6 +150,10 @@ The header has a **Get the agent** menu with `Windows agent` and `Mac agent`. Th
 `#/download-windows` and `#/download-mac`; the actual download is
 `GET /api/agents/download/:platform` and requires a signed-in session.
 
+The same header shows a live agent pill (online, offline, or no agent) and an offline banner
+appears on every screen while a paired agent is down. Agent projects cannot be scanned until
+their agent reconnects; the scan button is disabled and the API also refuses the start.
+
 The ZIP contains a `config.json` with the server URL, API URL, agent id and a token derived from
 the account. Treat the ZIP like a key: anyone who has it can pair an agent to that account.
 

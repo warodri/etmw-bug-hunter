@@ -35,6 +35,11 @@
               <div class="project-ignore">
                 <i class="pi pi-desktop" aria-hidden="true"></i>
                 Desktop agent
+                <p-tag
+                  [value]="agentOnline(project) ? 'Online' : 'Offline'"
+                  [severity]="agentOnline(project) ? 'success' : 'danger'"
+                  [rounded]="true"
+                />
               </div>
             }
             @if (project.description) {
@@ -69,7 +74,12 @@
                 icon="pi pi-search"
                 severity="secondary"
                 [text]="true"
-                pTooltip="Scan now"
+                [disabled]="project.mode === 'agent' && !agentOnline(project)"
+                [pTooltip]="
+                  project.mode === 'agent' && !agentOnline(project)
+                    ? 'Start the desktop agent on that computer first.'
+                    : 'Scan now'
+                "
                 ariaLabel="Scan this project now"
                 [loading]="startingId() === project.id"
                 (onClick)="scanNow(project)"

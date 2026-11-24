@@ -1,9 +1,10 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { filter } from 'rxjs';
 
+import { AgentService } from '../../SERVICES/agent.service';
 import { AuthService } from '../../SERVICES/auth.service';
 
 /**
@@ -21,12 +22,28 @@ import { AuthService } from '../../SERVICES/auth.service';
 export class DashboardShell {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly agents = inject(AgentService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly titleSignal = signal('Dashboard');
 
   readonly pageTitle = this.titleSignal.asReadonly();
   readonly navOpen = signal(false);
   readonly user = this.auth.user;
+  readonly agentList = this.agents.agents;
+
+  readonly agentState = computed<'online' | 'offline' | 'none'>(() => {
+    const list = this.agentList();
+
+    if (list.length === 0) return 'none';
+
+    return list.some((agent) => agent.online) ? 'online' : 'offline';
+  });
+
+  readonly agentLabel = computed(() => {
+    const state = this.agentState();
+
+    return state === 'online' ? 'Agent online' : state === 'offline' ? 'Agent offline' : 'No agent';
+  });
 
   readonly downloadItems: MenuItem[] = [
     {
@@ -43,6 +60,12 @@ export class DashboardShell {
 
   constructor() {
     this.syncTitle();
+    void this.refreshAgents();
+
+    const agentTimer = setInterval(() => {
+      void this.refreshAgents();
+    }, 10_000);
+    this.destroyRef.onDestroy(() => clearInterval(agentTimer));
 
     this.router.events
       .pipe(
@@ -58,6 +81,15 @@ export class DashboardShell {
   async logout(): Promise<void> {
     await this.auth.logout();
     await this.router.navigate(['/login']);
+  }
+
+  openAgentPage(): void {
+    const isMac = /Mac|iPhone|iPad/.test(navigator.userAgent);
+    void this.router.navigateByUrl(isMac ? '/download-mac' : '/download-windows');
+  }
+
+  private async refreshAgents(): Promise<void> {
+    await this.agents.refresh().catch(() => undefined);
   }
 
   private syncTitle(): void {

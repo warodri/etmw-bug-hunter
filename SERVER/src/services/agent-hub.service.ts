@@ -43,7 +43,7 @@ export interface AgentHubDependencies {
   readonly settings: SettingsService;
 }
 
-const PING_INTERVAL_MS = 30_000;
+const PING_INTERVAL_MS = 15_000;
 
 /**
  * The only bridge to a desktop agent.
@@ -458,7 +458,7 @@ export class AgentHub implements AgentScanDispatcher {
 
       const lastPoll = this.lastPollAt.get(active.agentId) ?? 0;
 
-      if (now - lastPoll <= 60_000) continue;
+      if (now - lastPoll <= 20_000) continue;
 
       void this.deps.scans.update(active.ownerId, active.scanId, {
         state: 'failed',

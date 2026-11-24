@@ -18,6 +18,19 @@
       <div class="topbar__actions">
         <button
           type="button"
+          class="topbar__agent"
+          [class.topbar__agent--online]="agentState() === 'online'"
+          [class.topbar__agent--offline]="agentState() === 'offline'"
+          [class.topbar__agent--none]="agentState() === 'none'"
+          (click)="openAgentPage()"
+          [title]="agentLabel() + ' — open the desktop agent downloads'"
+        >
+          <span class="topbar__agent-dot" aria-hidden="true"></span>
+          <span class="topbar__agent-text">{{ agentLabel() }}</span>
+        </button>
+
+        <button
+          type="button"
           class="topbar__download"
           (click)="agentMenu.toggle($event)"
           aria-label="Download the desktop agent"
@@ -43,6 +56,16 @@
         <p-tag value="v0.1.0" severity="secondary" [rounded]="true" />
       </div>
     </header>
+
+    @if (agentState() === 'offline') {
+      <div class="agent-banner" role="status">
+        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+        <span>Desktop agent offline. Agent projects cannot be scanned until it reconnects.</span>
+        <button type="button" class="agent-banner__link" (click)="openAgentPage()">
+          Agent downloads
+        </button>
+      </div>
+    }
 
     <main class="shell__content">
       <router-outlet />
