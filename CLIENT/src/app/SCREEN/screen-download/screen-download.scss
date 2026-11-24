@@ -122,8 +122,78 @@ code {
   color: #0f172a;
 }
 
+.terminal-card {
+  margin-top: 20px;
+  padding: 24px;
+}
+
+.terminal-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.terminal-card h3 {
+  margin: 22px 0 8px;
+  font-size: 0.88rem;
+  color: #0f172a;
+}
+
+.terminal-card h3:first-of-type {
+  margin-top: 18px;
+}
+
+.terminal-block {
+  margin: 0;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #0b1220;
+  color: #dbeafe;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+.terminal-block code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+.terminal-block--small {
+  padding: 12px 14px;
+  font-size: 0.78rem;
+}
+
+.terminal-note {
+  margin: 12px 0 0;
+  color: #64748b;
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.terminal-note a {
+  color: #1d4ed8;
+}
+
+.terminal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
 @media (max-width: 860px) {
-  .download-grid {
+  .download-grid,
+  .terminal-grid {
     grid-template-columns: 1fr;
+  }
+
+  .terminal-card__head {
+    flex-direction: column;
   }
 }

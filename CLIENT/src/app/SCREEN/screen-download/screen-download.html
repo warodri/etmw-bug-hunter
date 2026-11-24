@@ -34,15 +34,9 @@
     </p>
 
     <ol class="download-steps">
-      <li>Unzip the download.</li>
-      <li>
-        Run <code>{{ installCommand() }}</code> from that folder
-        @if (platform() === 'windows') {
-          (right-click → Run with PowerShell)
-        } @else {
-          in Terminal
-        }.
-      </li>
+      <li>Download the ZIP with the button above. It already contains your token.</li>
+      <li>Unzip it and open a terminal in that folder.</li>
+      <li>Run the installer with the commands in “Start it from the Terminal” below.</li>
       <li>The agent starts now and again every time the computer starts.</li>
       <li>Add a project, choose “Desktop agent”, and pick this computer.</li>
     </ol>
@@ -87,3 +81,62 @@
     </div>
   </section>
 </div>
+
+<section class="bh-card terminal-card">
+  <div class="terminal-card__head">
+    <div>
+      <h2>Start it from the Terminal</h2>
+      <p>
+        After downloading and unzipping, open a terminal and run these commands. The installer
+        registers the background service and starts it immediately.
+      </p>
+    </div>
+    <p-button
+      [label]="copied() ? 'Copied' : 'Copy commands'"
+      [icon]="copied() ? 'pi pi-check' : 'pi pi-copy'"
+      severity="secondary"
+      [text]="true"
+      (onClick)="copyCommands()"
+    />
+  </div>
+
+  <pre class="terminal-block"><code>{{ terminalCommand() }}</code></pre>
+
+  <p class="terminal-note">
+    @if (platform() === 'mac') {
+      Use Terminal.app. The installer needs Node.js 20+; if it is missing, install it from
+      <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a> first.
+    } @else {
+      Use PowerShell. The installer needs Node.js 20+; if it is missing, install it from
+      <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a> first.
+    }
+    If your browser already extracted the ZIP, skip the extraction line and enter the folder it
+    created.
+  </p>
+
+  <div class="terminal-grid">
+    <div>
+      <h3>Watch the log</h3>
+      <pre class="terminal-block terminal-block--small"><code>{{ logCommand() }}</code></pre>
+    </div>
+    <div>
+      <h3>Check the service</h3>
+      <pre class="terminal-block terminal-block--small"><code>{{ statusCommand() }}</code></pre>
+    </div>
+    <div>
+      <h3>Restart it</h3>
+      <pre class="terminal-block terminal-block--small"><code>{{ restartCommand() }}</code></pre>
+    </div>
+    <div>
+      <h3>Stop it</h3>
+      <pre class="terminal-block terminal-block--small"><code>{{ stopCommand() }}</code></pre>
+    </div>
+  </div>
+
+  <h3>Run once in the foreground (no auto-start)</h3>
+  <p class="terminal-note">
+    Use this to test the agent without installing the background service. It stops when you close
+    the terminal.
+  </p>
+  <pre class="terminal-block terminal-block--small"><code>{{ foregroundCommand() }}</code></pre>
+</section>
