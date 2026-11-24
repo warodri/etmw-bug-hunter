@@ -76,7 +76,10 @@ export class AgentPackageService {
     archive.append(JSON.stringify(config, null, 2), { name: 'config.json' });
     archive.file(path.join(root, AGENT_SOURCE_DIR, 'agent.cjs'), { name: 'agent.cjs' });
     archive.file(path.join(root, AGENT_SOURCE_DIR, 'package.json'), { name: 'package.json' });
-    archive.file(path.join(root, INSTALLER_DIR, 'install-mac.sh'), { name: 'install-mac.sh' });
+    archive.file(path.join(root, INSTALLER_DIR, 'install-mac.sh'), {
+      name: 'install-mac.sh',
+      mode: 0o755
+    });
     archive.file(path.join(root, INSTALLER_DIR, 'install-windows.ps1'), {
       name: 'install-windows.ps1'
     });
