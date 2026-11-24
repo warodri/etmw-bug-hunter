@@ -1,0 +1,10 @@
+@if (severity) {
+  <span [ngClass]="'sev sev--' + severity">
+    @if (dot) {
+      <span class="sev-dot" aria-hidden="true"></span>
+    }
+    {{ severity }}
+  </span>
+} @else {
+  <span class="sev sev--info">none</span>
+}

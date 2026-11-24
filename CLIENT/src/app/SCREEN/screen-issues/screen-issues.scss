@@ -1,0 +1,99 @@
+.count-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.count-total {
+    margin-right: 6px;
+    color: var(--bh-muted-strong);
+    font-size: 0.82rem;
+}
+
+.count-total strong {
+    color: var(--bh-ink);
+    font-size: 1rem;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) minmax(140px, 0.8fr) minmax(140px, 0.8fr) minmax(220px, 1.4fr);
+    gap: 14px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+
+.filter-field,
+.filter-search {
+    gap: 4px;
+}
+
+.filter-search {
+    align-self: end;
+}
+
+.table-card {
+    overflow: hidden;
+}
+
+.finding-rule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--bh-ink);
+}
+
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--bh-primary-soft);
+    color: var(--bh-primary-strong);
+    font-size: 0.62rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.finding-message {
+    margin-top: 2px;
+    max-width: 62ch;
+    color: var(--bh-muted-strong);
+    font-size: 0.8rem;
+}
+
+.finding-snippet {
+    margin: 6px 0 0;
+    padding: 6px 9px;
+    max-width: 62ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.72rem;
+}
+
+.finding-project {
+    margin-top: 3px;
+    color: var(--bh-muted);
+    font-size: 0.7rem;
+}
+
+@media (max-width: 980px) {
+    .filters {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .filters {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,30 @@
+.table-card {
+    overflow: hidden;
+}
+
+.project-name {
+    font-weight: 700;
+    color: var(--bh-ink);
+}
+
+.project-description {
+    margin-top: 2px;
+    color: var(--bh-muted);
+    font-size: 0.78rem;
+    max-width: 44ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.project-ignore {
+    margin-top: 2px;
+    color: var(--bh-muted);
+    font-size: 0.7rem;
+}
+
+.row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2px;
+}

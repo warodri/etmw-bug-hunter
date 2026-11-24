@@ -1,0 +1,130 @@
+<app-page-header
+  eyebrow="Configuration"
+  title="Settings"
+  description="What a scan reads, how deep it looks, and whether the optional AI pass runs. Saving here never touches a project file."
+>
+  <p-button label="Save settings" icon="pi pi-check" [loading]="saving()" (onClick)="save()" />
+</app-page-header>
+
+<form class="settings" [formGroup]="form">
+  <section class="bh-card panel">
+    <div class="panel__head">
+      <div>
+        <h2 class="panel__title">Scanning</h2>
+        <p class="panel__lede">A static scan is instant and offline. These controls decide what reaches the report.</p>
+      </div>
+      <span class="detector-badge">{{ detectorCount() }} static rules</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="min-severity">Store findings from</label>
+        <p-select
+          inputId="min-severity"
+          [options]="severityOptions"
+          formControlName="minSeverity"
+          optionLabel="label"
+          optionValue="value"
+        />
+        <p class="hint">Anything below this severity is not written to the database.</p>
+      </div>
+
+      <div class="field">
+        <label for="ignore-globs">Global ignore patterns</label>
+        <textarea
+          id="ignore-globs"
+          pTextarea
+          formControlName="ignoreGlobs"
+          rows="3"
+          spellcheck="false"
+          placeholder="node_modules, dist, *.min.js"
+        ></textarea>
+        <p class="hint">
+          Comma-separated, applied to every project. A bare name matches a folder at any depth.
+          A project can add its own patterns on its card.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bh-card panel">
+    <div class="panel__head">
+      <div>
+        <h2 class="panel__title">AI deep review <span class="optional">optional</span></h2>
+        <p class="panel__lede">
+          The static rules catch patterns. The model reads a handful of the largest source files and
+          names defects a pattern cannot describe.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field field--inline">
+        <span class="field__text">
+          <label for="ai-review">Run the AI pass</label>
+          <span class="hint">Off by default. A scan stays instant and fully offline until you turn it on.</span>
+        </span>
+        <p-toggleswitch inputId="ai-review" formControlName="aiReview" />
+      </div>
+
+      <div class="form-grid form-grid--two">
+        <div class="field">
+          <label for="ollama-url">Ollama URL</label>
+          <input id="ollama-url" pInputText formControlName="ollamaUrl" spellcheck="false" />
+          <p class="hint">Only the model list and a generate call are used. No model is pulled, created or copied.</p>
+        </div>
+
+        <div class="field">
+          <label for="ai-model">Model</label>
+          <div class="model-row">
+            <p-select
+              inputId="ai-model"
+              [options]="models()"
+              formControlName="model"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Fetch the list first"
+              [showClear]="true"
+            />
+            <p-button
+              label="Fetch models"
+              icon="pi pi-refresh"
+              severity="secondary"
+              [outlined]="true"
+              [loading]="loadingModels()"
+              (onClick)="fetchModels()"
+            />
+          </div>
+          <p class="hint">Read from the endpoint you enter; the choice is remembered with the settings.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="ai-max-files">Files the AI may read per scan</label>
+        <input
+          id="ai-max-files"
+          pInputText
+          type="number"
+          min="1"
+          max="50"
+          formControlName="aiMaxFiles"
+        />
+        <p class="hint">The largest source files are chosen first. One to fifty; ten is a sensible start.</p>
+      </div>
+
+      @if (!aiReviewEnabled) {
+        <p class="note">The AI pass is off. Turn it on to enable the endpoint, model and file count above.</p>
+      }
+    </div>
+  </section>
+
+  <section class="bh-card panel panel--policy">
+    <h2 class="panel__title"><i class="pi pi-lock" aria-hidden="true"></i> What Bug Hunter will never do</h2>
+    <ul class="policy-list">
+      <li>Edit, format, rename or delete any file in a project.</li>
+      <li>Run a project's build, tests, package manager or scripts.</li>
+      <li>Pull, create or copy an Ollama model.</li>
+      <li>Send your code anywhere when the AI pass is off.</li>
+    </ul>
+  </section>
+</form>

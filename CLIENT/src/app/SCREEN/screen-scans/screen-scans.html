@@ -1,0 +1,140 @@
+<app-page-header
+  eyebrow="Background process"
+  title="Scans"
+  description="A scan walks every analysable file, runs the static rules and records what it finds. It stores the cursor as it goes, so a stop or restart continues where it left off."
+>
+  <p-button
+    label="Scan all enabled"
+    icon="pi pi-play"
+    [disabled]="status().running"
+    [loading]="busy() && !status().running"
+    (onClick)="startAll()"
+  />
+  <p-button
+    label="Stop"
+    icon="pi pi-stop"
+    severity="danger"
+    [outlined]="true"
+    [disabled]="!status().running && status().queued === 0"
+    (onClick)="stop()"
+  />
+</app-page-header>
+
+<section class="bh-card live-card" [class.live-card--running]="status().running">
+  <div class="live-head">
+    <div>
+      <p class="bh-eyebrow">Now</p>
+      @if (status().scan) {
+        <h2 class="live-title">{{ status().scan?.projectName }}</h2>
+        <p class="live-path bh-mono">{{ status().scan?.projectPath }}</p>
+      } @else if (status().running) {
+        <h2 class="live-title">Preparing the scan…</h2>
+      } @else {
+        <h2 class="live-title">The scanner is idle</h2>
+        <p class="live-path">Start it when you are ready; nothing runs in the background until then.</p>
+      }
+    </div>
+
+    <p-tag
+      [value]="status().running ? 'Running' : status().queued > 0 ? status().queued + ' queued' : 'Stopped'"
+      [severity]="status().running ? 'success' : status().queued > 0 ? 'warn' : 'secondary'"
+      [rounded]="true"
+    />
+  </div>
+
+  @if (status().scan; as scan) {
+    <p-progressbar [value]="progress(scan)" [showValue]="false" [style]="{ height: '8px' }" />
+
+    <div class="live-stats">
+      <div class="live-stat">
+        <span class="live-stat__value">{{ progress(scan) }}%</span>
+        <span class="live-stat__label">progress</span>
+      </div>
+      <div class="live-stat">
+        <span class="live-stat__value">{{ scan.filesScanned }} / {{ scan.totalFiles }}</span>
+        <span class="live-stat__label">files read</span>
+      </div>
+      <div class="live-stat">
+        <span class="live-stat__value">{{ scan.issuesFound }}</span>
+        <span class="live-stat__label">issues found</span>
+      </div>
+      <div class="live-stat">
+        <span class="live-stat__value">{{ scan.filesSkipped }}</span>
+        <span class="live-stat__label">skipped</span>
+      </div>
+    </div>
+
+    @if (scan.error) {
+      <p class="live-error">{{ scan.error }}</p>
+    }
+  }
+</section>
+
+<section class="bh-card table-card">
+  <div class="table-head">
+    <h2 class="table-title">Run history</h2>
+    <span class="bh-muted">{{ total() }} run(s)</span>
+  </div>
+
+  @if (history().length === 0) {
+    <app-empty-state
+      icon="pi pi-search"
+      title="No scan yet"
+      message="Add a project, then press Scan all enabled. Each run stays in this history with its counts and duration."
+    />
+  } @else {
+    <p-table
+      [value]="history()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="pageSize()"
+      [totalRecords]="total()"
+      [first]="(page() - 1) * pageSize()"
+      [rowsPerPageOptions]="[20]"
+      dataKey="id"
+      styleClass="p-datatable-sm"
+      (onLazyLoad)="onPage($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="min-width: 190px">Project</th>
+          <th style="width: 110px">State</th>
+          <th style="width: 90px">Files</th>
+          <th style="width: 90px">Issues</th>
+          <th style="width: 110px">Worst</th>
+          <th style="width: 100px">Duration</th>
+          <th style="min-width: 160px">Started</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-scan>
+        <tr>
+          <td>
+            <div class="run-project">{{ scan.projectName }}</div>
+            @if (scan.aiUsed) {
+              <span class="run-ai"><i class="pi pi-sparkles" aria-hidden="true"></i> AI review</span>
+            }
+          </td>
+          <td>
+            <p-tag
+              [value]="stateLabel(scan.state)"
+              [severity]="stateSeverity(scan.state)"
+              [rounded]="true"
+            />
+          </td>
+          <td>{{ scan.filesScanned }}</td>
+          <td>{{ scan.issuesFound }}</td>
+          <td><app-severity-tag [severity]="scan.worstSeverity" /></td>
+          <td>{{ duration(scan) }}</td>
+          <td>
+            @if (scan.startedAt) {
+              <span class="bh-muted">{{ scan.startedAt | date: 'dd MMM, HH:mm' }}</span>
+            } @else {
+              <span class="bh-muted">Not started</span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</section>

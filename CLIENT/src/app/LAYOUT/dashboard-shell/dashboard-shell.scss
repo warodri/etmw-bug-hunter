@@ -1,0 +1,221 @@
+/**
+ * The frame: a fixed dark rail and a light, scrollable workspace. Below 1024px the rail becomes an
+ * overlay drawer rather than shrinking its labels away.
+ */
+
+$rail-width: 264px;
+
+.shell {
+    min-height: 100vh;
+    background: var(--bh-canvas);
+}
+
+.shell__body {
+    min-height: 100vh;
+    margin-left: $rail-width;
+    display: flex;
+    flex-direction: column;
+}
+
+.shell__content {
+    flex: 1;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 30px 34px 72px;
+}
+
+.shell__backdrop {
+    display: none;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 68px;
+    padding: 0 34px;
+    background: rgb(255 255 255 / 88%);
+    border-bottom: 1px solid var(--bh-line);
+    backdrop-filter: blur(12px);
+}
+
+.topbar__menu {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--bh-line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--bh-ink);
+    cursor: pointer;
+}
+
+.topbar__crumbs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.topbar__product {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--bh-muted);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.topbar__sep {
+    font-size: 0.68rem;
+    color: #cbd5e1;
+}
+
+.topbar__page {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--bh-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.topbar__download {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 13px;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.topbar__download:hover {
+    background: #dbeafe;
+}
+
+.topbar__user {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--bh-muted-strong);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.topbar__signout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--bh-line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--bh-muted-strong);
+    cursor: pointer;
+}
+
+.topbar__signout:hover {
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+.topbar__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 11px;
+    border: 1px solid var(--bh-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--bh-muted-strong);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.topbar__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--bh-success);
+    box-shadow: 0 0 0 3px rgb(5 150 105 / 14%);
+}
+
+@media (max-width: 1024px) {
+    .shell__body {
+        margin-left: 0;
+    }
+
+    .shell .shell__backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 24;
+        background: rgb(11 18 32 / 45%);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 180ms ease;
+    }
+
+    .shell--nav-open .shell__backdrop {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .topbar {
+        padding: 0 18px;
+    }
+
+    .topbar__menu {
+        display: inline-flex;
+    }
+
+    .topbar__product,
+    .topbar__sep {
+        display: none;
+    }
+
+    .shell__content {
+        padding: 22px 18px 60px;
+    }
+
+    .topbar__user {
+        display: none;
+    }
+}
+
+@media (max-width: 720px) {
+    .topbar__meta {
+        display: none;
+    }
+
+    .topbar__download span {
+        display: none;
+    }
+}

@@ -1,0 +1,123 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(680px, 94vw)' }"
+  [header]="isEdit ? 'Edit project' : 'Add a project'"
+>
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="save()">
+    <div class="field">
+      <label for="project-name">Name</label>
+      <input id="project-name" pInputText formControlName="name" placeholder="ETMW Bug Hunter" />
+      @if (form.controls['name'].touched && form.controls['name'].invalid) {
+        <p class="hint hint--error">Give the project a name.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="project-mode">Where is this folder?</label>
+      <p-select
+        inputId="project-mode"
+        formControlName="mode"
+        [options]="modeOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+      />
+      <p class="hint">
+        “This computer” means the server can read the folder directly. “Desktop agent” means a
+        paired computer reads it locally and sends only findings.
+      </p>
+    </div>
+
+    @if (isAgent) {
+      <div class="field">
+        <label for="project-agent">Desktop agent</label>
+        <p-select
+          inputId="project-agent"
+          formControlName="agentId"
+          [options]="agentOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Choose a paired computer"
+          appendTo="body"
+        />
+        @if (agents.length === 0) {
+          <p class="hint hint--error">
+            No agent is paired yet. Use “Get the agent” in the header, install it, then reopen this
+            dialog.
+          </p>
+        } @else if (form.controls['agentId'].touched && !form.controls['agentId'].value) {
+          <p class="hint hint--error">Choose the computer that can see this folder.</p>
+        }
+      </div>
+    }
+
+    <div class="field">
+      <label for="project-path">Folder path</label>
+      <input
+        id="project-path"
+        pInputText
+        formControlName="path"
+        [placeholder]="isAgent ? 'C:\\work\\app or /Users/you/code/app' : '/Volumes/MACMINI-HD/ETMW/etmw_bug_hunter'"
+        spellcheck="false"
+      />
+      @if (isAgent) {
+        <p class="hint">
+          The absolute path on the computer running the agent. Bug Hunter reads it; it never
+          writes to it.
+        </p>
+      } @else {
+        <p class="hint">
+          An absolute path on this server. Bug Hunter reads it; it never writes to it.
+        </p>
+      }
+      @if (form.controls['path'].touched && form.controls['path'].invalid) {
+        <p class="hint hint--error">Give the absolute path of the code folder.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="project-description">Description</label>
+      <textarea
+        id="project-description"
+        pTextarea
+        formControlName="description"
+        rows="3"
+        placeholder="What this codebase is, and what matters most in it."
+      ></textarea>
+    </div>
+
+    <div class="field">
+      <label for="project-ignore">Extra ignore patterns</label>
+      <textarea
+        id="project-ignore"
+        pTextarea
+        formControlName="ignoreGlobs"
+        rows="2"
+        placeholder="migrations, generated, *.spec.ts"
+        spellcheck="false"
+      ></textarea>
+      <p class="hint">Comma-separated, relative to the folder. The built-in list already skips node_modules, dist, build and lock files.</p>
+    </div>
+
+    <div class="field field--inline">
+      <span class="field__text">
+        <label for="project-enabled">Enabled</label>
+        <span class="hint">A disabled project is skipped by "Scan all".</span>
+      </span>
+      <p-toggleswitch inputId="project-enabled" formControlName="enabled" />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="close()" />
+    <p-button
+      [label]="isEdit ? 'Save changes' : 'Add project'"
+      icon="pi pi-check"
+      [loading]="saving"
+      (onClick)="save()"
+    />
+  </ng-template>
+</p-dialog>

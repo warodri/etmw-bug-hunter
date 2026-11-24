@@ -1,0 +1,108 @@
+<app-page-header
+  eyebrow="Workspace"
+  title="Projects"
+  description="Each project is one folder on this computer. Bug Hunter walks it in the background and reports what it finds — it never edits a file."
+>
+  <p-button label="Add project" icon="pi pi-plus" (onClick)="openCreate()" />
+</app-page-header>
+
+<section class="bh-card table-card">
+  @if (list().length === 0 && !loading()) {
+    <app-empty-state
+      icon="pi pi-folder-open"
+      title="No project yet"
+      message="Add the folder of a codebase you want reviewed. The first scan starts whenever you are ready."
+    >
+      <p-button label="Add the first project" icon="pi pi-plus" (onClick)="openCreate()" />
+    </app-empty-state>
+  } @else {
+    <p-table [value]="list()" [loading]="loading()" dataKey="id" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="min-width: 220px">Project</th>
+          <th style="min-width: 220px">Folder</th>
+          <th style="min-width: 150px">Last scan</th>
+          <th style="width: 110px">Enabled</th>
+          <th style="width: 168px"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-project>
+        <tr>
+          <td>
+            <div class="project-name">{{ project.name }}</div>
+            @if (project.mode === 'agent') {
+              <div class="project-ignore">
+                <i class="pi pi-desktop" aria-hidden="true"></i>
+                Desktop agent
+              </div>
+            }
+            @if (project.description) {
+              <div class="project-description">{{ project.description }}</div>
+            }
+          </td>
+          <td>
+            <span class="bh-mono bh-path" [pTooltip]="project.path" tooltipPosition="top">
+              {{ project.path }}
+            </span>
+            @if (project.ignoreGlobs.length > 0) {
+              <div class="project-ignore">{{ project.ignoreGlobs.length }} extra ignore pattern(s)</div>
+            }
+          </td>
+          <td>
+            @if (project.lastScanAt) {
+              <span class="bh-muted">{{ project.lastScanAt | date: 'dd MMM yyyy, HH:mm' }}</span>
+            } @else {
+              <span class="bh-muted">Never</span>
+            }
+          </td>
+          <td>
+            <p-tag
+              [value]="project.enabled ? 'Enabled' : 'Disabled'"
+              [severity]="project.enabled ? 'success' : 'secondary'"
+              [rounded]="true"
+            />
+          </td>
+          <td>
+            <div class="row-actions">
+              <p-button
+                icon="pi pi-search"
+                severity="secondary"
+                [text]="true"
+                pTooltip="Scan now"
+                ariaLabel="Scan this project now"
+                [loading]="startingId() === project.id"
+                (onClick)="scanNow(project)"
+              />
+              <p-button
+                icon="pi pi-pencil"
+                severity="secondary"
+                [text]="true"
+                pTooltip="Edit"
+                ariaLabel="Edit project"
+                (onClick)="openEdit(project)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                pTooltip="Remove"
+                ariaLabel="Remove project"
+                (onClick)="confirmDelete(project)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</section>
+
+<app-project-form
+  [visible]="dialogVisible()"
+  [project]="editing()"
+  [saving]="saving()"
+  [agents]="agentList()"
+  (visibleChange)="dialogVisible.set($event)"
+  (submitted)="onSubmitted($event)"
+/>

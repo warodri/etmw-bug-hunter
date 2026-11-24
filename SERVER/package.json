@@ -1,0 +1,48 @@
+{
+  "name": "etmw-bug-hunter-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ETMW Bug Hunter \u2014 read-only code analysis API",
+  "main": "dist/server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "test": "node --import tsx --test \"test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.5.0",
+    "morgan": "^1.10.1",
+    "nodemailer": "^10.6.1",
+    "ws": "^8.23.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.4",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.3.0",
+    "@types/nodemailer": "^8.0.2",
+    "@types/supertest": "^7.2.1",
+    "@types/ws": "^8.18.2",
+    "supertest": "^7.2.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0"
+}

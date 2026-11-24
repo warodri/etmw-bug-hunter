@@ -1,0 +1,163 @@
+<app-page-header
+  eyebrow="Overview"
+  title="Dashboard"
+  description="A quiet, read-only watchdog for the codebases you point it at. It reads the files and reports what looks wrong; every decision stays with you."
+>
+  <p-button label="Open issues" icon="pi pi-exclamation-triangle" routerLink="/issues" severity="secondary" [outlined]="true" />
+  @if (summary()?.running) {
+    <p-button label="Stop" icon="pi pi-stop" severity="danger" [outlined]="true" (onClick)="stop()" />
+  } @else {
+    <p-button
+      label="Scan all enabled"
+      icon="pi pi-play"
+      [loading]="busy()"
+      (onClick)="startAll()"
+    />
+  }
+</app-page-header>
+
+<p class="policy">
+  <i class="pi pi-lock" aria-hidden="true"></i>
+  <span>
+    <strong>Read-only by design.</strong> Bug Hunter opens every file for reading and never edits,
+    formats, renames or deletes anything in your projects.
+  </span>
+</p>
+
+@if (summary(); as data) {
+  <div class="stat-grid">
+    <div class="bh-card stat">
+      <span class="stat__label">Projects</span>
+      <span class="stat__value">{{ data.projectsEnabled }}<small> / {{ data.projectsTotal }}</small></span>
+      <span class="stat__hint">enabled / registered</span>
+    </div>
+
+    <div class="bh-card stat">
+      <span class="stat__label">Open issues</span>
+      <span class="stat__value">{{ data.issues.total }}</span>
+      <span class="stat__hint">across every project</span>
+    </div>
+
+    <div class="bh-card stat stat--alert">
+      <span class="stat__label">Critical + high</span>
+      <span class="stat__value">{{ criticalPlusHigh() }}</span>
+      <span class="stat__hint">worth reading first</span>
+    </div>
+
+    <div class="bh-card stat">
+      <span class="stat__label">Last finished</span>
+      <span class="stat__value stat__value--small">{{ lastRunLabel() }}</span>
+      <span class="stat__hint">
+        {{ data.running ? 'Scanner running now' : data.queued > 0 ? data.queued + ' scan(s) queued' : 'Scanner idle' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="bh-card panel">
+      <div class="panel__head">
+        <h2 class="panel__title">Open issues by severity</h2>
+        <span class="bh-muted">{{ data.detectorCount }} static rules + optional AI review</span>
+      </div>
+
+      <div class="severity-bars">
+        @for (row of severityRows; track row.severity) {
+          <div class="severity-row">
+            <span class="severity-row__label">
+              <app-severity-tag [severity]="row.severity" />
+            </span>
+            <span class="severity-row__track">
+              <span
+                class="severity-row__fill"
+                [ngClass]="'sev-fill--' + row.severity"
+                [style.width.%]="share(row.severity)"
+              ></span>
+            </span>
+            <span class="severity-row__count">{{ data.issues.bySeverity[row.severity] }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="bh-card panel">
+      <div class="panel__head">
+        <h2 class="panel__title">How it works</h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <strong>Add a project folder.</strong>
+          <span>An absolute path on this computer. Nothing is copied or uploaded.</span>
+        </li>
+        <li>
+          <strong>Press scan.</strong>
+          <span>Files are walked and every static rule runs. The optional Ollama pass reads a few large files.</span>
+        </li>
+        <li>
+          <strong>Read the report.</strong>
+          <span>Each finding names the rule, the file and the exact line. Ignoring a row is a note to yourself — not a code change.</span>
+        </li>
+      </ol>
+    </section>
+  </div>
+
+  <section class="bh-card table-card">
+    <div class="panel__head">
+      <h2 class="panel__title">Projects</h2>
+      <p-button label="Manage projects" icon="pi pi-folder" routerLink="/projects" [text]="true" severity="secondary" />
+    </div>
+
+    @if (data.projects.length === 0) {
+      <app-empty-state
+        icon="pi pi-folder-open"
+        title="No project registered"
+        message="Add the folder of a codebase to see its first report here."
+      >
+        <p-button label="Add a project" icon="pi pi-plus" routerLink="/projects" />
+      </app-empty-state>
+    } @else {
+      <p-table [value]="data.projects" dataKey="project.id" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width: 200px">Project</th>
+            <th style="width: 150px">Open issues</th>
+            <th style="width: 150px">Worst open</th>
+            <th style="width: 140px">Last scan</th>
+            <th style="min-width: 150px">When</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <div class="project-name">{{ row.project.name }}</div>
+              <span class="bh-mono bh-path">{{ row.project.path }}</span>
+            </td>
+            <td>{{ row.open.total }}</td>
+            <td>
+              <app-severity-tag [severity]="worstOf(row.open.bySeverity)" />
+            </td>
+            <td>
+              <p-tag
+                [value]="stateLabel(row.lastScan?.state)"
+                [severity]="stateSeverity(row.lastScan?.state)"
+                [rounded]="true"
+              />
+            </td>
+            <td>
+              @if (row.lastScan?.finishedAt || row.lastScan?.startedAt) {
+                <span class="bh-muted">{{ (row.lastScan?.finishedAt ?? row.lastScan?.startedAt) | date: 'dd MMM, HH:mm' }}</span>
+              } @else {
+                <span class="bh-muted">Never</span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </section>
+} @else {
+  <div class="loading-card bh-card">
+    <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+    <span>Reading the summary…</span>
+  </div>
+}

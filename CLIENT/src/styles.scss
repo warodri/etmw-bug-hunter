@@ -1,0 +1,339 @@
+/*
+ * ETMW Bug Hunter — global design system.
+ *
+ * Palette, typography and the few PrimeNG refinements that must be visible in every screen.
+ * Feature-specific layout lives in each component's own stylesheet.
+ */
+
+:root {
+    --bh-ink: #0b1220;
+    --bh-ink-soft: #16203a;
+    --bh-primary: #4f46e5;
+    --bh-primary-strong: #4338ca;
+    --bh-primary-soft: #eef2ff;
+    --bh-canvas: #f4f6fb;
+    --bh-surface: #ffffff;
+    --bh-line: #e2e8f0;
+    --bh-line-soft: #eef2f7;
+    --bh-muted: #64748b;
+    --bh-muted-strong: #475569;
+    --bh-success: #059669;
+    --bh-warning: #b45309;
+    --bh-danger: #dc2626;
+    --bh-radius: 16px;
+    --bh-shadow: 0 18px 40px -28px rgb(15 23 42 / 35%);
+    --bh-shadow-soft: 0 8px 24px -18px rgb(15 23 42 / 40%);
+
+    --p-primary-color: #4f46e5;
+    --p-primary-hover-color: #4338ca;
+    --p-primary-active-color: #3730a3;
+    --p-primary-contrast-color: #ffffff;
+    --p-content-border-radius: 12px;
+    --p-text-color: #0f172a;
+    --p-text-muted-color: #64748b;
+}
+
+/* Severity is the product's one semantic colour scale, defined once. */
+:root {
+    --sev-critical: #9f1239;
+    --sev-critical-bg: #ffe4e6;
+    --sev-high: #b91c1c;
+    --sev-high-bg: #fee2e2;
+    --sev-medium: #b45309;
+    --sev-medium-bg: #fef3c7;
+    --sev-low: #0e7490;
+    --sev-low-bg: #cffafe;
+    --sev-info: #475569;
+    --sev-info-bg: #f1f5f9;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--bh-canvas);
+    color: var(--bh-ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--bh-ink);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+}
+
+a {
+    color: var(--bh-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    font-family: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--bh-primary);
+    outline-offset: 2px;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Shared surfaces
+ * ------------------------------------------------------------------------- */
+
+.bh-card {
+    background: var(--bh-surface);
+    border: 1px solid var(--bh-line);
+    border-radius: var(--bh-radius);
+    box-shadow: var(--bh-shadow-soft);
+}
+
+.bh-muted {
+    color: var(--bh-muted);
+}
+
+.bh-eyebrow {
+    margin: 0 0 6px;
+    color: var(--bh-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.bh-mono {
+    font-family: 'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+}
+
+.bh-path {
+    display: inline-block;
+    max-width: 42ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+    color: var(--bh-muted-strong);
+}
+
+.bh-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.bh-row--end {
+    justify-content: flex-end;
+}
+
+.bh-spacer {
+    flex: 1;
+}
+
+.bh-divider {
+    height: 1px;
+    background: var(--bh-line-soft);
+    margin: 18px 0;
+}
+
+/* Severity chips, used by the tag component and the dashboard bars. */
+.sev {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.sev--critical { background: var(--sev-critical-bg); color: var(--sev-critical); }
+.sev--high { background: var(--sev-high-bg); color: var(--sev-high); }
+.sev--medium { background: var(--sev-medium-bg); color: var(--sev-medium); }
+.sev--low { background: var(--sev-low-bg); color: var(--sev-low); }
+.sev--info { background: var(--sev-info-bg); color: var(--sev-info); }
+
+.sev-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Policy banner: the read-only promise, visible on the dashboard. */
+.policy {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-size: 0.82rem;
+}
+
+.policy i {
+    margin-top: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * PrimeNG refinements
+ * ------------------------------------------------------------------------- */
+
+.p-panel {
+    border: 1px solid var(--bh-line);
+    border-radius: var(--bh-radius);
+    box-shadow: var(--bh-shadow-soft);
+    overflow: hidden;
+}
+
+.p-panel .p-panel-header {
+    padding: 1.05rem 1.35rem;
+    background: var(--bh-surface);
+    border-bottom: 1px solid var(--bh-line-soft);
+    font-weight: 700;
+}
+
+.p-panel .p-panel-content {
+    padding: 1.35rem;
+    background: var(--bh-surface);
+}
+
+.p-panel .p-panel-header .p-panel-header-actions {
+    margin-left: auto;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    padding: 0.7rem 0.9rem;
+    background: #f8fafc;
+    color: var(--bh-muted-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.8rem 0.9rem;
+    border-color: var(--bh-line-soft);
+    vertical-align: middle;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+    background: #fbfcfe;
+}
+
+.p-datatable .p-paginator {
+    padding: 0.65rem 0.9rem;
+    border-top: 1px solid var(--bh-line-soft);
+    background: transparent;
+}
+
+.p-dialog .p-dialog-header {
+    padding: 1.15rem 1.4rem;
+    border-bottom: 1px solid var(--bh-line-soft);
+}
+
+.p-dialog .p-dialog-content {
+    padding: 1.35rem 1.4rem;
+}
+
+.p-dialog .p-dialog-footer {
+    padding: 1rem 1.4rem;
+    border-top: 1px solid var(--bh-line-soft);
+}
+
+.p-toast {
+    max-width: min(28rem, 92vw);
+}
+
+.p-inputtext {
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+.p-select-label {
+    font-size: 0.9rem;
+}
+
+/* Forms */
+.form-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field > label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--bh-muted-strong);
+}
+
+.field .hint {
+    margin: 0;
+    color: var(--bh-muted);
+    font-size: 0.72rem;
+}
+
+.field--inline {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.field--inline .field__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+@media (max-width: 560px) {
+    .bh-path {
+        max-width: 26ch;
+    }
+}

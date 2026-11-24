@@ -1,0 +1,156 @@
+<app-page-header
+  eyebrow="The report"
+  title="Issues"
+  description="Everything the scans found, newest first. Triaging a row only changes its status here — the source file is never touched."
+>
+  <p-button
+    label="Refresh"
+    icon="pi pi-refresh"
+    severity="secondary"
+    [outlined]="true"
+    [loading]="busy()"
+    (onClick)="load(page()?.page ?? 1)"
+  />
+</app-page-header>
+
+@if (page()?.counts; as counts) {
+  <div class="count-strip">
+    <span class="count-total"><strong>{{ counts.total }}</strong> open</span>
+    <span class="sev sev--critical">critical {{ counts.bySeverity.critical }}</span>
+    <span class="sev sev--high">high {{ counts.bySeverity.high }}</span>
+    <span class="sev sev--medium">medium {{ counts.bySeverity.medium }}</span>
+    <span class="sev sev--low">low {{ counts.bySeverity.low }}</span>
+    <span class="sev sev--info">info {{ counts.bySeverity.info }}</span>
+  </div>
+}
+
+<section class="bh-card filters">
+  <div class="field filter-field">
+    <label for="filter-project">Project</label>
+    <p-select
+      inputId="filter-project"
+      [options]="projectOptions"
+      [ngModel]="projectId()"
+      (ngModelChange)="onProject($event)"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="All projects"
+    />
+  </div>
+
+  <div class="field filter-field">
+    <label for="filter-severity">Severity</label>
+    <p-select
+      inputId="filter-severity"
+      [options]="severityOptions"
+      [ngModel]="severity()"
+      (ngModelChange)="onSeverity($event)"
+      optionLabel="label"
+      optionValue="value"
+    />
+  </div>
+
+  <div class="field filter-field">
+    <label for="filter-status">Status</label>
+    <p-select
+      inputId="filter-status"
+      [options]="statusOptions"
+      [ngModel]="status()"
+      (ngModelChange)="onStatus($event)"
+      optionLabel="label"
+      optionValue="value"
+    />
+  </div>
+
+  <div class="field filter-search">
+    <label for="filter-search">Search</label>
+    <input
+      id="filter-search"
+      pInputText
+      [ngModel]="search()"
+      (ngModelChange)="onSearch($event)"
+      placeholder="File, rule or message"
+    />
+  </div>
+</section>
+
+<section class="bh-card table-card">
+  @if ((page()?.issues?.length ?? 0) === 0 && !busy()) {
+    <app-empty-state
+      icon="pi pi-check-circle"
+      title="Nothing matches"
+      message="Either the code is clean for these filters, or no scan has run yet. Try another status or run a scan."
+    />
+  } @else {
+    <p-table
+      [value]="page()?.issues ?? []"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="page()?.pageSize ?? 25"
+      [totalRecords]="page()?.total ?? 0"
+      [first]="((page()?.page ?? 1) - 1) * (page()?.pageSize ?? 25)"
+      [loading]="busy()"
+      [rowsPerPageOptions]="[25, 50, 100]"
+      dataKey="id"
+      styleClass="p-datatable-sm"
+      (onLazyLoad)="onPage($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 108px">Severity</th>
+          <th style="min-width: 300px">Finding</th>
+          <th style="min-width: 230px">File</th>
+          <th style="width: 120px">Category</th>
+          <th style="width: 150px">Found</th>
+          <th style="width: 130px">Status</th>
+          <th style="width: 110px"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-issue>
+        <tr>
+          <td><app-severity-tag [severity]="issue.severity" /></td>
+          <td>
+            <div class="finding-rule">
+              {{ issue.rule }}
+              @if (issue.aiGenerated) {
+                <span class="ai-badge"><i class="pi pi-sparkles" aria-hidden="true"></i> AI</span>
+              }
+            </div>
+            <div class="finding-message">{{ issue.message }}</div>
+            @if (issue.snippet) {
+              <pre class="finding-snippet bh-mono">{{ issue.snippet }}</pre>
+            }
+          </td>
+          <td>
+            <span class="bh-mono bh-path" [pTooltip]="issue.filePath" tooltipPosition="top">
+              {{ location(issue) }}
+            </span>
+            <div class="finding-project">{{ projectName(issue.projectId) }}</div>
+          </td>
+          <td>
+            <p-tag [value]="issue.category" severity="secondary" [rounded]="true" />
+          </td>
+          <td>
+            <span class="bh-muted">{{ issue.createdAt | date: 'dd MMM, HH:mm' }}</span>
+          </td>
+          <td>
+            <p-tag
+              [value]="issue.status"
+              [severity]="issue.status === 'open' ? 'warn' : 'secondary'"
+              [rounded]="true"
+            />
+          </td>
+          <td>
+            <p-button
+              [label]="issue.status === 'open' ? 'Ignore' : 'Reopen'"
+              [severity]="issue.status === 'open' ? 'secondary' : 'success'"
+              [text]="true"
+              (onClick)="toggleStatus(issue)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</section>

@@ -1,0 +1,44 @@
+# Secrets — never publish these
+.env
+.env.*
+!.env.example
+.env.deploy
+scripts/
+
+# The desktop agent gets its token from the download, never from the repository
+CLIENT/DESKTOP/agent/config.json
+CLIENT/DESKTOP/agent/node_modules/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-deploy/
+CLIENT/dist/
+CLIENT/dist-deploy/
+SERVER/dist/
+.angular/
+.cache/
+coverage/
+*.tsbuildinfo
+
+# Logs and local runtime files
+*.log
+logs/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local test data
+tmp/
+temp/
+*.sqlite
+*.db

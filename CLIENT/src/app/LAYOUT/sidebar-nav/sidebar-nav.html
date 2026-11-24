@@ -1,0 +1,57 @@
+<aside class="nav" [class.nav--open]="open">
+  <a class="nav__brand" routerLink="/dashboard" (click)="navigated.emit()">
+    <span class="nav__mark" aria-hidden="true">BH</span>
+    <span class="nav__brand-text">
+      <strong>ETMW Bug Hunter</strong>
+      <small>Reads code. Reports issues.</small>
+    </span>
+  </a>
+
+  <p class="nav__section">Workspace</p>
+
+  <nav class="nav__list" aria-label="Main navigation">
+    @for (item of items; track item.link) {
+      <a
+        class="nav__item"
+        [class.nav__item--process]="!!item.process"
+        [routerLink]="item.link"
+        routerLinkActive="nav__item--active"
+        [attr.aria-label]="item.label + (item.process ? ' — ' + processTitle() : '')"
+        (click)="navigated.emit()"
+      >
+        <i [class]="item.icon" aria-hidden="true"></i>
+        <span class="nav__item-text">
+          <span class="nav__item-label">{{ item.label }}</span>
+          <span class="nav__item-hint">{{ item.hint }}</span>
+        </span>
+        @if (item.process) {
+          <span
+            class="nav__status"
+            [class.nav__status--running]="status().running"
+            [class.nav__status--stopped]="!status().running"
+            [class.nav__status--queued]="!status().running && status().queued > 0"
+            [attr.title]="processTitle()"
+            role="img"
+            [attr.aria-label]="processTitle()"
+          ></span>
+        }
+        <i class="pi pi-angle-right nav__item-chevron" aria-hidden="true"></i>
+      </a>
+    }
+  </nav>
+
+  <div class="nav__footer">
+    <p class="nav__legend" aria-label="Process status legend">
+      <span class="nav__status nav__status--running" aria-hidden="true"></span>
+      Running
+      <span class="nav__status nav__status--stopped" aria-hidden="true"></span>
+      Stopped
+    </p>
+
+    <div class="nav__tip">
+      <i class="pi pi-lock" aria-hidden="true"></i>
+      <p>Bug Hunter opens files for reading only. It never edits, formats or fixes them.</p>
+    </div>
+    <span class="nav__version">ETMW Bug Hunter · v0.1.0</span>
+  </div>
+</aside>

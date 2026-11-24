@@ -1,0 +1,8 @@
+<div class="empty">
+  <i [class]="icon" aria-hidden="true"></i>
+  <strong>{{ title }}</strong>
+  @if (message) {
+    <p>{{ message }}</p>
+  }
+  <ng-content />
+</div>

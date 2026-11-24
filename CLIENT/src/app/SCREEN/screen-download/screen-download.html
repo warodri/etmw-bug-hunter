@@ -1,0 +1,89 @@
+<app-page-header
+  eyebrow="Desktop agent"
+  [title]="'Download for ' + platformLabel()"
+  description="The dashboard runs in the cloud; the agent runs on the computer that holds your code. It reads files and sends findings, and cannot write, delete or change anything."
+/>
+
+<div class="download-grid">
+  <section class="bh-card download-card">
+    <div class="download-card__top">
+      <div class="download-icon">
+        <i class="pi pi-download" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h2>ETMW Bug Hunter agent</h2>
+        <p>
+          The download already contains your account token. Treat the ZIP like a key: anyone who
+          has it can pair an agent to your account.
+        </p>
+      </div>
+    </div>
+
+    <a
+      pButton
+      class="download-button"
+      [href]="downloadUrl()"
+      icon="pi pi-download"
+      [label]="'Download for ' + platformLabel()"
+    ></a>
+
+    <p class="download-note">
+      Requires Node.js 20 or newer. Install it from
+      <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a> if the installer
+      reports that it is missing.
+    </p>
+
+    <ol class="download-steps">
+      <li>Unzip the download.</li>
+      <li>
+        Run <code>{{ installCommand() }}</code> from that folder
+        @if (platform() === 'windows') {
+          (right-click → Run with PowerShell)
+        } @else {
+          in Terminal
+        }.
+      </li>
+      <li>The agent starts now and again every time the computer starts.</li>
+      <li>Add a project, choose “Desktop agent”, and pick this computer.</li>
+    </ol>
+  </section>
+
+  <section class="bh-card status-card">
+    <h2>Agent status</h2>
+
+    @if (agent(); as current) {
+      <div class="status-row">
+        <span class="status-dot" [class.status-dot--online]="current.online"></span>
+        <div>
+          <div class="status-name">{{ current.name }}</div>
+          <div class="status-meta">
+            {{ current.online ? 'Online and ready to scan.' : 'Installed, but not connected yet.' }}
+          </div>
+          @if (current.lastSeenAt) {
+            <div class="status-meta">Last seen {{ current.lastSeenAt | date: 'dd MMM yyyy, HH:mm' }}</div>
+          }
+        </div>
+      </div>
+    } @else {
+      <p class="status-empty">
+        No {{ platformLabel() }} agent has downloaded this account yet. Use the download button,
+        then install it on that computer.
+      </p>
+    }
+
+    <p-button
+      label="Refresh status"
+      icon="pi pi-refresh"
+      severity="secondary"
+      [text]="true"
+      [loading]="refreshing()"
+      (onClick)="refresh()"
+    />
+
+    <div class="status-note">
+      <strong>Read-only by design.</strong> The protocol has no write, delete, rename or patch
+      message. The agent imports <code>readdir</code>, <code>stat</code> and <code>readFile</code>
+      only.
+    </div>
+  </section>
+</div>

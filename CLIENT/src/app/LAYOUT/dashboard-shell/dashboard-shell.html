@@ -1,0 +1,51 @@
+<div class="shell" [class.shell--nav-open]="navOpen()">
+  <app-sidebar-nav [open]="navOpen()" (navigated)="navOpen.set(false)" />
+
+  <div class="shell__backdrop" (click)="navOpen.set(false)" aria-hidden="true"></div>
+
+  <div class="shell__body">
+    <header class="topbar">
+      <button type="button" class="topbar__menu" (click)="navOpen.set(true)" aria-label="Open navigation">
+        <i class="pi pi-bars" aria-hidden="true"></i>
+      </button>
+
+      <div class="topbar__crumbs">
+        <span class="topbar__product">ETMW BUG HUNTER</span>
+        <i class="pi pi-angle-right topbar__sep" aria-hidden="true"></i>
+        <span class="topbar__page">{{ pageTitle() }}</span>
+      </div>
+
+      <div class="topbar__actions">
+        <button
+          type="button"
+          class="topbar__download"
+          (click)="agentMenu.toggle($event)"
+          aria-label="Download the desktop agent"
+        >
+          <i class="pi pi-download" aria-hidden="true"></i>
+          <span>Get the agent</span>
+        </button>
+        <p-menu #agentMenu [model]="downloadItems" [popup]="true" appendTo="body" />
+
+        @if (user(); as account) {
+          <span class="topbar__user" [title]="account.email">{{ account.email }}</span>
+        }
+        <button type="button" class="topbar__signout" (click)="logout()" title="Sign out">
+          <i class="pi pi-sign-out" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="topbar__meta">
+        <span class="topbar__status">
+          <span class="topbar__dot" aria-hidden="true"></span>
+          Read-only mode
+        </span>
+        <p-tag value="v0.1.0" severity="secondary" [rounded]="true" />
+      </div>
+    </header>
+
+    <main class="shell__content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
