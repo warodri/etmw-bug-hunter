@@ -60,16 +60,16 @@ export class ScreenDownload implements OnInit {
     if (this.platform() === 'mac') {
       return [
         'cd ~/Downloads',
-        'unzip etmw-bug-hunter-agent-mac.zip -d etmw-bug-hunter-agent',
-        'cd etmw-bug-hunter-agent',
+        'unzip etmw-bug-hunter-agent-mac.zip -d etmw-bug-hunter-agent-mac',
+        'cd etmw-bug-hunter-agent-mac',
         'bash install-mac.sh'
       ].join('\n');
     }
 
     return [
       'cd $env:USERPROFILE\\Downloads',
-      'Expand-Archive .\\etmw-bug-hunter-agent-windows.zip -DestinationPath .\\etmw-bug-hunter-agent -Force',
-      'cd .\\etmw-bug-hunter-agent',
+      'Expand-Archive .\\etmw-bug-hunter-agent-windows.zip -DestinationPath .\\etmw-bug-hunter-agent-windows -Force',
+      'cd .\\etmw-bug-hunter-agent-windows',
       'powershell -ExecutionPolicy Bypass -File .\\install-windows.ps1'
     ].join('\n');
   }
@@ -77,14 +77,14 @@ export class ScreenDownload implements OnInit {
   foregroundCommand(): string {
     if (this.platform() === 'mac') {
       return [
-        'cd ~/Downloads/etmw-bug-hunter-agent',
+        'cd ~/Downloads/etmw-bug-hunter-agent-mac',
         'npm install --omit=dev',
         'node agent.cjs'
       ].join('\n');
     }
 
     return [
-      'cd $env:USERPROFILE\\Downloads\\etmw-bug-hunter-agent',
+      'cd $env:USERPROFILE\\Downloads\\etmw-bug-hunter-agent-windows',
       'npm install --omit=dev',
       'node agent.cjs'
     ].join('\n');

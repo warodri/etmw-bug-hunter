@@ -178,6 +178,7 @@ function connect() {
 
   ws.on('unexpected-response', (_request, response) => {
     log('WebSocket rejected; switching to HTTPS polling', { status: response.statusCode });
+    response.resume();
     startHttpMode();
   });
 
@@ -207,13 +208,18 @@ function startHttpMode() {
   }
 
   if (socket) {
+    const dying = socket;
+    socket = null;
+
     try {
-      socket.removeAllListeners();
-      socket.terminate();
+      dying.removeAllListeners();
+      // `terminate()` on a socket that never finished its handshake emits an error; keep a
+      // listener so the fallback does not crash the process.
+      dying.on('error', () => {});
+      dying.terminate();
     } catch {
       // Already gone.
     }
-    socket = null;
   }
 
   log('using HTTPS polling fallback', { api: config.apiUrl });
